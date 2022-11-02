@@ -1,4 +1,4 @@
 export class Loja {
-  id: string;
+  id?: string;
   number: number;
 }
