@@ -1,4 +1,5 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { CreateLojaDto } from './dto/create-loja.dto';
 import { LojaService } from './loja.service';
 
 @Controller('loja')
@@ -10,7 +11,7 @@ export class lojaController {
     return this.lojaService.findAll();
   }
   @Post()
-  create() {
-    return this.lojaService.create();
+  create(@Body() createLojaDto: CreateLojaDto) {
+    return this.lojaService.create(createLojaDto);
   }
 }
