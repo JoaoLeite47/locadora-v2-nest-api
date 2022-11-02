@@ -5,14 +5,17 @@ import { Loja } from './entities/loja.entity';
 
 @Injectable()
 export class LojaService {
-  lojas: Loja[] = [];
-
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
+  findAll(): Promise<Loja[]> {
     return this.prisma.loja.findMany();
   }
-  create(dto: CreateLojaDto) {
+
+  findOne(id: string): Promise<Loja> {
+    return this.prisma.loja.findUnique({ where: { id } });
+  }
+
+  create(dto: CreateLojaDto): Promise<Loja> {
     const data: Loja = { ...dto };
     return this.prisma.loja.create({ data });
   }
