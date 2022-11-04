@@ -17,6 +17,8 @@ model Loja {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  ordens Ordem[]
+
   @@map("loja")
 }
 
@@ -26,6 +28,8 @@ model Veiculo {
   description String
   price       Float
   image       String
+
+  ordens Ordem[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -43,5 +47,24 @@ model Usuario {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  ordens Ordem[]
+
   @@map("usuario")
+}
+
+model Ordem {
+  id String @id @default(uuid())
+
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id])
+  usuarioId String @map("usuario_Id")
+
+  loja   Loja  @relation(fields: [lojaId], references: [id])
+  lojaId String @map("loja_Id")
+
+  veiculos Veiculo[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("ordem")
 }
