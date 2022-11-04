@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -7,60 +8,107 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsuarioService {
+  private usuarioSelect = {
+    id: true,
+    nickname: true,
+    name: true,
+    password: false,
+    image: true,
+    createdAt: true,
+    updatedAt: true,
+  };
+
   constructor(private readonly prisma: PrismaService) {}
 
   findAll(): Promise<Usuario[]> {
-    return this.prisma.usuario.findMany();
+    return this.prisma.usuario.findMany({
+      select: this.usuarioSelect,
+    });
   }
 
   async findById(id: string): Promise<Usuario> {
-    const record = await this.prisma.usuario.findUnique({ where: { id } });
+    const record = await this.prisma.usuario.findUnique({
+      where: { id },
+      select: this.usuarioSelect,
+    });
 
     if (!record) {
-      throw new NotFoundException(`Usuario com o ID '${id}' não encontrado!`);
-    } // caso o registro não seja encontrado, ele retorna um 404 not found
+      throw new NotFoundException(`Registro com o ID '${id}' não encontrado.`);
+    }
 
     return record;
-  } // metodo para funções que utilizam o id para tratamento de error 404
+  }
 
   async findOne(id: string): Promise<Usuario> {
     return this.findById(id);
   }
 
-  create(dto: CreateUsuarioDto): Promise<Usuario> {
-    delete dto.confirmPassword;
-    const data: Usuario = { ...dto };
-    return this.prisma.usuario.create({ data }).catch(this.handleError);
-  }
+  async create(dto: CreateUsuarioDto): Promise<Usuario> {
+    if (dto.password != dto.confirmPassword) {
+      throw new BadRequestException('As senhas informadas não são iguais.');
+    }
 
-  handleError(error: Error): undefined {
-    const errorLines = error.message?.split('\n'); // vai pegar as queblas de linhas do erro e separar a parte que me interessa
-    const lastErrorLine = errorLines[errorLines.length - 1]; // me tras a ultima linha do erro, na qual o erro está melhor descrito
-    throw new UnprocessableEntityException(
-      lastErrorLine || 'Algum erro aconteceu na operação',
-    );
-  } // function para satisfazer o erro de criação de usuario com number duplicado
+    delete dto.confirmPassword;
+
+    const data: Usuario = {
+      ...dto,
+      password: await bcrypt.hash(dto.password, 10),
+    };
+
+    return this.prisma.usuario
+      .create({
+        data,
+        select: this.usuarioSelect,
+      })
+      .catch(this.handleError);
+  }
 
   async update(id: string, dto: UpdateUsuarioDto): Promise<Usuario> {
     await this.findById(id);
+
+    if (dto.password) {
+      if (dto.password != dto.confirmPassword) {
+        throw new BadRequestException('As senhas informadas não são iguais.');
+      }
+    }
 
     delete dto.confirmPassword;
 
     const data: Partial<Usuario> = { ...dto };
 
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, 10);
+    }
+
     return this.prisma.usuario
       .update({
         where: { id },
         data,
+        select: this.usuarioSelect,
       })
       .catch(this.handleError);
   }
 
-  async remove(id: string) {
+  async delete(id: string) {
     await this.findById(id);
+
     await this.prisma.usuario.delete({ where: { id } });
-  } // como não tem retorno, é necessário por um async na função
+  }
+
+  handleError(error: Error): undefined {
+    const errorLines = error.message?.split('\n');
+    const lastErrorLine = errorLines[errorLines.length - 1]?.trim();
+
+    if (!lastErrorLine) {
+      console.error(error);
+    }
+
+    throw new UnprocessableEntityException(
+      lastErrorLine || 'Algum erro ocorreu ao executar a operação',
+    );
+  }
 }
