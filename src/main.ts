@@ -9,7 +9,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Locadora V2')
-    .setDescription('Aplicação para gestão das de uma locadora de motos')
+    .setDescription('Aplicação para gestão das de uma locadora de veículos')
     .setVersion('1.0.0')
     .addTag('status')
     .build();
