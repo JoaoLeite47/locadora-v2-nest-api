@@ -1,9 +1,6 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { handleError } from 'src/utils/handle.error.utils';
 import { CreateLojaDto } from './dto/create-loja.dto';
 import { UpdateLojaDto } from './dto/update-loja.dto';
 import { Loja } from './entities/loja.entity';
@@ -32,16 +29,8 @@ export class LojaService {
 
   create(dto: CreateLojaDto): Promise<Loja> {
     const data: Loja = { ...dto };
-    return this.prisma.loja.create({ data }).catch(this.handleError);
+    return this.prisma.loja.create({ data }).catch(handleError);
   }
-
-  handleError(error: Error): undefined {
-    const errorLines = error.message?.split('\n'); // vai pegar as queblas de linhas do erro e separar a parte que me interessa
-    const lastErrorLine = errorLines[errorLines.length - 1]; // me tras a ultima linha do erro, na qual o erro está melhor descrito
-    throw new UnprocessableEntityException(
-      lastErrorLine || 'Algum erro aconteceu na operação',
-    );
-  } // function para satisfazer o erro de criação de loja com number duplicado
 
   async update(id: string, dto: UpdateLojaDto): Promise<Loja> {
     await this.findById(id);
@@ -53,7 +42,7 @@ export class LojaService {
         where: { id },
         data,
       })
-      .catch(this.handleError);
+      .catch(handleError);
   }
 
   async delete(id: string) {

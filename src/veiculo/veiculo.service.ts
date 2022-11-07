@@ -1,9 +1,6 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { handleError } from 'src/utils/handle.error.utils';
 import { CreateVeiculoDto } from './dto/create-veiculo.dto';
 import { UpdateVeiculoDto } from './dto/update-veiculo.dto';
 import { Veiculo } from './entities/veiculo.entity';
@@ -32,16 +29,8 @@ export class VeiculoService {
 
   create(dto: CreateVeiculoDto): Promise<Veiculo> {
     const data: Veiculo = { ...dto };
-    return this.prisma.veiculo.create({ data }).catch(this.handleError);
+    return this.prisma.veiculo.create({ data }).catch(handleError);
   }
-
-  handleError(error: Error): undefined {
-    const errorLines = error.message?.split('\n'); // vai pegar as queblas de linhas do erro e separar a parte que me interessa
-    const lastErrorLine = errorLines[errorLines.length - 1]; // me tras a ultima linha do erro, na qual o erro está melhor descrito
-    throw new UnprocessableEntityException(
-      lastErrorLine || 'Algum erro aconteceu na operação',
-    );
-  } // function para satisfazer o erro de criação de veiculo com number duplicado
 
   async update(id: string, dto: UpdateVeiculoDto): Promise<Veiculo> {
     await this.findById(id);
@@ -53,7 +42,7 @@ export class VeiculoService {
         where: { id },
         data,
       })
-      .catch(this.handleError);
+      .catch(handleError);
   }
 
   async remove(id: string) {
