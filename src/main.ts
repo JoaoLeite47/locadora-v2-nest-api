@@ -12,6 +12,7 @@ async function bootstrap() {
     .setDescription('Aplicação para gestão das de uma locadora de veículos')
     .setVersion('1.0.0')
     .addTag('status')
+    .addBearerAuth() // linha para adição do auth no swagger
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
