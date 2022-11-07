@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Loja {
+  id     String @id @default(uuid())
+  number Int    @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ordens Ordem[]
+
+  @@map("loja")
+}
+
+model Veiculo {
+  id          String @id @default(uuid())
+  name        String @unique
+  description String
+  price       Float
+  image       String
+
+  ordens OrdemVeiculo[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("veiculo")
+}
+
+model Usuario {
+  id       String @id @default(uuid())
+  nickname String @unique
+  name     String
+  password String
+  image    String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  ordens Ordem[]
+
+  @@map("usuario")
+}
+
+model Ordem {
+  id String @id @default(uuid())
+
+  usuario   Usuario   @relation(fields: [usuarioId], references: [id])
+  usuarioId String @map("usuario_Id")
+
+  loja   Loja  @relation(fields: [lojaId], references: [id])
+  lojaId String @map("loja_Id")
+
+  veiculos OrdemVeiculo[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("ordem")
+}
+
+model OrdemVeiculo {
+  id String @id @default(uuid())
+
+  ordem   Ordem  @relation(fields: [ordemId], references: [id])
+  ordemId String @map("ordem_Id")
+
+  veiculo   Veiculo @relation(fields: [veiculoId], references: [id])
+  veiculoId String  @map("veiculo_id")
+
+  quantity    Int
+  description String
+
+  @@unique([ordemId, veiculoId])
+  @@map("ordem_to_veiculo")
+}
