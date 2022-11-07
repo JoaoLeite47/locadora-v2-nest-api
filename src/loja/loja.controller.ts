@@ -8,14 +8,22 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateLojaDto } from './dto/create-loja.dto';
 import { LojaService } from './loja.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger/dist/decorators';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger/dist/decorators';
 import { Loja } from './entities/loja.entity';
 import { UpdateLojaDto } from './dto/update-loja.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Loja')
+@UseGuards(AuthGuard())
+@ApiBearerAuth()
 @Controller('loja')
 export class lojaController {
   constructor(private lojaService: LojaService) {}

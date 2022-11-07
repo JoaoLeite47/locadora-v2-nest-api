@@ -8,13 +8,17 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { VeiculoService } from './veiculo.service';
 import { CreateVeiculoDto } from './dto/create-veiculo.dto';
 import { UpdateVeiculoDto } from './dto/update-veiculo.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('veículo')
+@UseGuards(AuthGuard())
+@ApiBearerAuth()
 @Controller('veiculo')
 export class VeiculoController {
   constructor(private readonly veiculoService: VeiculoService) {}
