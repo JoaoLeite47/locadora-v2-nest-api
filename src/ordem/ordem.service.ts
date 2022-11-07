@@ -19,6 +19,15 @@ export class OrdemService {
           number: createOrdemDto.lojaNumber,
         },
       },
+      veiculos: {
+        createMany: {
+          data: createOrdemDto.veiculos.map((CreateOrdemVeiculoDto) => ({
+            veiculoId: CreateOrdemVeiculoDto.productId,
+            quantity: CreateOrdemVeiculoDto.quantity,
+            description: CreateOrdemVeiculoDto.description,
+          })),
+        },
+      },
     }; // status 422
 
     return this.prisma.ordem
@@ -38,7 +47,11 @@ export class OrdemService {
           },
           veiculos: {
             select: {
-              name: true,
+              veiculo: {
+                select: {
+                  name: true,
+                },
+              },
             },
           },
         },
@@ -85,11 +98,15 @@ export class OrdemService {
         },
         veiculos: {
           select: {
-            id: true,
-            name: true,
-            price: true,
-            image: true,
-            description: true,
+            veiculo: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                image: true,
+                description: true,
+              },
+            },
           },
         },
       },
