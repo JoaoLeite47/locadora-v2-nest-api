@@ -29,7 +29,7 @@ model Veiculo {
   price       Float
   image       String
 
-  ordens Ordem[]
+  ordens OrdemVeiculo[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -61,10 +61,26 @@ model Ordem {
   loja   Loja  @relation(fields: [lojaId], references: [id])
   lojaId String @map("loja_Id")
 
-  veiculos Veiculo[]
+  veiculos OrdemVeiculo[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("ordem")
+}
+
+model OrdemVeiculo {
+  id String @id @default(uuid())
+
+  ordem   Ordem  @relation(fields: [ordemId], references: [id])
+  ordemId String @map("ordem_Id")
+
+  veiculo   Veiculo @relation(fields: [veiculoId], references: [id])
+  veiculoId String  @map("veiculo_id")
+
+  quantity    Int
+  description String
+
+  @@unique([ordemId, veiculoId])
+  @@map("ordem_to_veiculo")
 }
