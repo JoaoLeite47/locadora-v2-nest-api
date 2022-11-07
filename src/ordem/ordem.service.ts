@@ -7,11 +7,11 @@ import { CreateOrdemDto } from './dto/create-ordem.dto';
 @Injectable()
 export class OrdemService {
   constructor(private readonly prisma: PrismaService) {}
-  create(createOrdemDto: CreateOrdemDto) {
+  create(userId: string, createOrdemDto: CreateOrdemDto) {
     const data: Prisma.OrdemCreateInput = {
       usuario: {
         connect: {
-          id: createOrdemDto.usarioId,
+          id: userId,
         },
       },
       loja: {

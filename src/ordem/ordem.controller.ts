@@ -3,6 +3,8 @@ import { OrdemService } from './ordem.service';
 import { CreateOrdemDto } from './dto/create-ordem.dto';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { LoggedUser } from 'src/auth/logged-user.decorator';
+import { Usuario } from 'src/usuario/entities/usuario.entity';
 
 @ApiTags('order')
 @UseGuards(AuthGuard())
@@ -15,8 +17,8 @@ export class OrdemController {
   @ApiOperation({
     summary: 'Criar uma ordem',
   })
-  create(@Body() createOrdemDto: CreateOrdemDto) {
-    return this.ordemService.create(createOrdemDto);
+  create(@LoggedUser() user: Usuario, @Body() createOrdemDto: CreateOrdemDto) {
+    return this.ordemService.create(user.id, createOrdemDto);
   }
 
   @Get()
