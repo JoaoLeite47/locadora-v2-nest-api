@@ -15,9 +15,8 @@ export class UsuarioService {
   private usuarioSelect = {
     id: true,
     nickname: true,
-    name: true,
+    email: true,
     password: false,
-    image: true,
     createdAt: true,
     updatedAt: true,
   };

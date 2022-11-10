@@ -12,9 +12,9 @@ export class CreateUsuarioDto {
   @IsString()
   @ApiProperty({
     description: 'Nome do usuário. Apenas para exibição',
-    example: 'Joao Leite',
+    example: 'JoaoLeite@outlook.com',
   })
-  name: string;
+  email: string;
 
   @IsString()
   @MinLength(6)

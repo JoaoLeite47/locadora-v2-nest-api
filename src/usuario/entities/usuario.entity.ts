@@ -1,7 +1,7 @@
 export class Usuario {
   id?: string;
   nickname: string;
-  name: string;
+  email: string;
   password: string;
   createdAt?: Date;
   updatedAt?: Date;

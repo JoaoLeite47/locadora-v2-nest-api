@@ -33,8 +33,6 @@ export class UsuarioController {
   @ApiOperation({
     summary: 'Listar todos os usuários',
   })
-  @UseGuards(AuthGuard())
-  @ApiBearerAuth()
   findAll() {
     return this.usuarioService.findAll();
   }
@@ -43,8 +41,6 @@ export class UsuarioController {
   @ApiOperation({
     summary: 'Visualizar um usuário pelo ID',
   })
-  @UseGuards(AuthGuard())
-  @ApiBearerAuth()
   findOne(@Param('id') id: string) {
     return this.usuarioService.findOne(id);
   }
@@ -53,8 +49,6 @@ export class UsuarioController {
   @ApiOperation({
     summary: 'Editar um usuário pelo ID',
   })
-  @UseGuards(AuthGuard())
-  @ApiBearerAuth()
   update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
     return this.usuarioService.update(id, updateUsuarioDto);
   }
@@ -64,8 +58,6 @@ export class UsuarioController {
   @ApiOperation({
     summary: 'Remover um usuário pelo ID',
   })
-  @UseGuards(AuthGuard())
-  @ApiBearerAuth()
   delete(@Param('id') id: string) {
     return this.usuarioService.delete(id);
   }
