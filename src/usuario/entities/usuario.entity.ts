@@ -3,7 +3,6 @@ export class Usuario {
   nickname: string;
   name: string;
   password: string;
-  image: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

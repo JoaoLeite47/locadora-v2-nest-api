@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, MinLength, Matches, IsUrl } from 'class-validator';
+import { IsString, MinLength, Matches } from 'class-validator';
 
 export class CreateUsuarioDto {
   @IsString()
@@ -32,11 +32,4 @@ export class CreateUsuarioDto {
     example: 'N3w_password',
   })
   confirmPassword: string;
-
-  @IsUrl()
-  @ApiProperty({
-    description: 'Imagem de perfil do usuário',
-    example: 'https://avatars.githubusercontent.com/u/100146681?v=4',
-  })
-  image: string;
 }
